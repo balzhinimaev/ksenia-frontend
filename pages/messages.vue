@@ -65,8 +65,34 @@
                 class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                 :disabled="sending"
               >
-                {{ sending ? 'Отправка...' : 'Отправить всем' }}
+                {{ sending ? 'Отправка...' : 'Отправить выбранным' }}
               </button>
+            </div>
+          </div>
+
+          <!-- Broadcast отправка -->
+          <div class="mt-8 bg-white p-6 rounded-lg shadow border-2 border-purple-200">
+            <h2 class="text-xl font-semibold mb-4 text-purple-900">Отправка всем пользователям (Broadcast)</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Сообщение для всех пользователей</label>
+                <textarea
+                  v-model="broadcastMessage"
+                  rows="3"
+                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder="Введите текст сообщения, которое получат ВСЕ пользователи"
+                ></textarea>
+              </div>
+              <button
+                @click="sendBroadcastMessage"
+                class="w-full px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                :disabled="sending"
+              >
+                {{ sending ? 'Отправка...' : 'Отправить ВСЕМ пользователям' }}
+              </button>
+              <p class="text-sm text-purple-600">
+                ⚠️ Внимание: Сообщение будет отправлено ВСЕМ пользователям системы
+              </p>
             </div>
           </div>
 
@@ -87,6 +113,7 @@
 const token = useCookie('bearer-token')
 const sending = ref(false)
 const notification = ref(null)
+const broadcastMessage = ref('')
 
 const singleMessage = ref({
   chat_id: '',
@@ -176,6 +203,44 @@ async function sendMassMessage() {
 
     showNotification('Сообщения успешно отправлены', 'success')
     massMessage.value.message = ''
+  } catch (error) {
+    showNotification(error.message, 'error')
+  } finally {
+    sending.value = false
+  }
+}
+
+// Отправка broadcast сообщения
+async function sendBroadcastMessage() {
+  if (!broadcastMessage.value) {
+    showNotification('Введите текст сообщения', 'error')
+    return
+  }
+
+  sending.value = true
+  try {
+    const response = await fetch('http://217.114.2.121:7000/api/messages/broadcast', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token.value}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: broadcastMessage.value
+      })
+    })
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        token.value = null
+        navigateTo('/login')
+        throw new Error('Сессия истекла. Пожалуйста, войдите снова.')
+      }
+      throw new Error('Ошибка при отправке broadcast сообщения')
+    }
+
+    showNotification('Broadcast сообщение успешно отправлено всем пользователям', 'success')
+    broadcastMessage.value = ''
   } catch (error) {
     showNotification(error.message, 'error')
   } finally {
