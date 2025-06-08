@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  frontend:
+    build: .
+    ports:
+      - "3000:3000"
+    networks:
+      - ksenia-network
+
+networks:
+  ksenia-network:
+    external: true
+    name: ksenia_backend_default 
