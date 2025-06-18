@@ -164,14 +164,19 @@ async function fetchCustomers() {
   customersError.value = ''
 
   try {
-    const response = await fetch('https://botprorok.ru/api/customers/get-by-id', {
+    const response = await fetch('/api/customers', {
       method: 'GET',
       headers: {
-        'x-api-key': config.public.apiKey || process.env.API_KEY || ''
+        'Authorization': `Bearer ${token.value}`,
+        'Content-Type': 'application/json'
       }
     })
 
     if (!response.ok) {
+      if (response.status === 401) {
+        router.push('/login')
+        throw new Error('Сессия истекла. Пожалуйста, войдите снова.')
+      }
       throw new Error(`Ошибка ${response.status}: ${response.statusText}`)
     }
 
