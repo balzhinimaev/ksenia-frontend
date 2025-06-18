@@ -18,12 +18,12 @@
             >
               Пользователи
             </NuxtLink>
-            <NuxtLink 
+            <!-- <NuxtLink 
               to="/messages" 
               class="text-white hover:text-gray-300"
             >
               Сообщения
-            </NuxtLink>
+            </NuxtLink> -->
             <NuxtLink 
               to="/customers" 
               class="text-white hover:text-gray-300"
