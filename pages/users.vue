@@ -196,7 +196,6 @@
 </template>
 
 <script setup>
-
 const searchChatId = ref('')
 const searchedUser = ref(null)
 const users = ref([])

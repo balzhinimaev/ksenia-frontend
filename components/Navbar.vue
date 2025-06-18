@@ -34,6 +34,18 @@
 
           <!-- Ссылки для Кастомера -->
           <template v-if="isCustomer">
+             <NuxtLink 
+              to="/users" 
+              class="text-white hover:text-gray-300"
+            >
+              Пользователи
+            </NuxtLink>
+            <NuxtLink 
+              to="/messages" 
+              class="text-white hover:text-gray-300"
+            >
+              Сообщения
+            </NuxtLink>
             <NuxtLink 
               to="/settings" 
               class="text-white hover:text-gray-300"

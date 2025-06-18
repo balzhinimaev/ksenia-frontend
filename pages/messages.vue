@@ -110,7 +110,6 @@
 </template>
 
 <script setup>
-
 const token = useCookie('bearer-token')
 const sending = ref(false)
 const notification = ref(null)
