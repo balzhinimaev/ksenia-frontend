@@ -9,24 +9,39 @@
           >
             Главная
           </NuxtLink>
-          <NuxtLink 
-            to="/users" 
-            class="text-white hover:text-gray-300"
-          >
-            Пользователи
-          </NuxtLink>
-          <NuxtLink 
-            to="/messages" 
-            class="text-white hover:text-gray-300"
-          >
-            Сообщения
-          </NuxtLink>
-          <NuxtLink 
-            to="/customers" 
-            class="text-white hover:text-gray-300"
-          >
-            Кастомеры
-          </NuxtLink>
+
+          <!-- Ссылки для Админа -->
+          <template v-if="isAdmin">
+            <NuxtLink 
+              to="/users" 
+              class="text-white hover:text-gray-300"
+            >
+              Пользователи
+            </NuxtLink>
+            <NuxtLink 
+              to="/messages" 
+              class="text-white hover:text-gray-300"
+            >
+              Сообщения
+            </NuxtLink>
+            <NuxtLink 
+              to="/customers" 
+              class="text-white hover:text-gray-300"
+            >
+              Кастомеры
+            </NuxtLink>
+          </template>
+
+          <!-- Ссылки для Кастомера -->
+          <template v-if="isCustomer">
+            <NuxtLink 
+              to="/settings" 
+              class="text-white hover:text-gray-300"
+            >
+              Настройки бота
+            </NuxtLink>
+          </template>
+
         </div>
         <button
           @click="handleLogout"
@@ -41,6 +56,7 @@
 
 <script setup>
 const router = useRouter()
+const { isAdmin, isCustomer } = useAuth()
 
 function handleLogout() {
   const cookie = useCookie('bearer-token')
