@@ -51,7 +51,7 @@
               <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
                 <div>
                   <dt class="text-sm font-medium text-gray-500">ID</dt>
-                  <dd class="mt-1 text-sm text-gray-900 font-mono">{{ customer.id || customerId }}</dd>
+                  <dd class="mt-1 text-sm text-gray-900 font-mono">{{ customer._id || customerId }}</dd>
                 </div>
                 <div>
                   <dt class="text-sm font-medium text-gray-500">Имя пользователя</dt>
@@ -235,7 +235,7 @@ function formatDate(dateString) {
 const hasAdditionalData = computed(() => {
   if (!customer.value) return false
   
-  const standardFields = ['id', 'username', 'role', 'email', 'createdAt', 'lastLogin', 'botToken']
+  const standardFields = ['_id', 'username', 'role', 'email', 'createdAt', 'updatedAt', 'lastLogin', 'botToken', '__v']
   const additionalFields = Object.keys(customer.value).filter(key => !standardFields.includes(key))
   
   return additionalFields.length > 0

@@ -30,14 +30,14 @@
             <div class="divide-y divide-gray-200">
               <div
                 v-for="customer in customers"
-                :key="customer.id"
+                :key="customer._id"
                 class="p-4 hover:bg-gray-50 flex items-center justify-between"
               >
                 <div class="flex-1">
                   <div class="flex items-center space-x-4">
                     <div>
                       <p class="text-sm font-medium text-gray-900">{{ customer.username || 'Без имени' }}</p>
-                      <p class="text-sm text-gray-500">ID: {{ customer.id }}</p>
+                      <p class="text-sm text-gray-500">ID: {{ customer._id }}</p>
                       <p v-if="customer.botToken" class="text-xs text-gray-400 font-mono">
                         Token: {{ customer.botToken.substring(0, 20) }}...
                       </p>
@@ -52,7 +52,7 @@
                     Перейти
                   </button>
                   <button
-                    @click="copyCustomerId(customer.id)"
+                    @click="copyCustomerId(customer._id)"
                     class="px-3 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-700"
                   >
                     Копировать ID
