@@ -134,7 +134,7 @@ async function sendSingleMessage() {
 
   sending.value = true
   try {
-    const response = await fetch('http://217.114.2.121:7000/api/messages/single', {
+    const response = await fetch('/api/messages/single', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token.value}`,
@@ -180,7 +180,7 @@ async function sendMassMessage() {
 
   sending.value = true
   try {
-    const response = await fetch('http://217.114.2.121:7000/api/messages/mass', {
+    const response = await fetch('/api/messages/mass', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token.value}`,
@@ -219,7 +219,7 @@ async function sendBroadcastMessage() {
 
   sending.value = true
   try {
-    const response = await fetch('http://217.114.2.121:7000/api/messages/broadcast', {
+    const response = await fetch('/api/messages/broadcast', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token.value}`,

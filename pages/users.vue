@@ -212,7 +212,7 @@ async function searchUser() {
   error.value = ''
   
   try {
-    const response = await fetch(`http://217.114.2.121:7000/api/users/by-chat-id/${searchChatId.value}`, {
+    const response = await fetch(`/api/users/by-chat-id/${searchChatId.value}`, {
       headers: {
         'Authorization': `Bearer ${token.value}`
       }
@@ -239,7 +239,7 @@ async function searchUser() {
 async function fetchUsers(page = 1) {
   error.value = ''
   try {
-    const response = await fetch(`http://217.114.2.121:7000/api/users/?page=${page}`, {
+    const response = await fetch(`/api/users/?page=${page}`, {
       headers: {
         'Authorization': `Bearer ${token.value}`
       }

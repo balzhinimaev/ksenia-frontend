@@ -67,7 +67,7 @@ async function handleLogin() {
     loading.value = true
     error.value = ''
     
-    const response = await fetch('http://217.114.2.121:7000/api/auth/login', {
+    const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
