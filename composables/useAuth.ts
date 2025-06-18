@@ -18,7 +18,9 @@ export const useAuth = () => {
       // Декодируем токен, чтобы получить данные пользователя
       const decoded = jwtDecode<any>(tokenCookie.value);
       return {
-        id: decoded.id, // Предполагаем, что ID пользователя хранится в поле 'id'
+        // Ищем ID в полях customerId ( для кастомера) или id (для админа).
+        // Это делает логику более гибкой.
+        id: decoded.customerId || decoded.id, 
         role: decoded.role,
         login: decoded.login,
         username: decoded.username,
