@@ -196,6 +196,10 @@
 </template>
 
 <script setup>
+definePageMeta({
+  middleware: "admin",
+});
+
 const searchChatId = ref('')
 const searchedUser = ref(null)
 const users = ref([])

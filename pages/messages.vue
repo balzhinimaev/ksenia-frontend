@@ -110,6 +110,10 @@
 </template>
 
 <script setup>
+definePageMeta({
+  middleware: "admin",
+});
+
 const token = useCookie('bearer-token')
 const sending = ref(false)
 const notification = ref(null)

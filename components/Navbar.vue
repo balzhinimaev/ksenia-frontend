@@ -21,6 +21,12 @@
           >
             Сообщения
           </NuxtLink>
+          <NuxtLink 
+            to="/customers" 
+            class="text-white hover:text-gray-300"
+          >
+            Кастомеры
+          </NuxtLink>
         </div>
         <button
           @click="handleLogout"
