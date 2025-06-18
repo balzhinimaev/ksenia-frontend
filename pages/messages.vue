@@ -134,7 +134,7 @@ async function sendSingleMessage() {
 
   sending.value = true
   try {
-    const response = await fetch('/api/messages/single', {
+    const response = await fetch('/api/messages/send', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token.value}`,
