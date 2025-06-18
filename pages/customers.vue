@@ -46,7 +46,7 @@
                 </div>
                 <div class="flex items-center space-x-2">
                   <button
-                    @click="goToCustomer(customer.id)"
+                    @click="goToCustomer(customer._id)"
                     class="px-3 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700"
                   >
                     Перейти

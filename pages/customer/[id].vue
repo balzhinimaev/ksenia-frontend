@@ -11,7 +11,7 @@
           >
             ← Назад
           </button>
-          <h1 class="text-3xl font-bold text-gray-900">Кастомер {{ customerId }}</h1>
+                     <h1 class="text-3xl font-bold text-gray-900">Кастомер {{ customerId || 'Загрузка...' }}</h1>
         </div>
 
         <!-- Загрузка -->
@@ -130,7 +130,8 @@ definePageMeta({
 
 const route = useRoute()
 const config = useRuntimeConfig()
-const customerId = route.params.id
+const router = useRouter()
+const customerId = computed(() => route.params.id)
 
 const customer = ref(null)
 const loading = ref(false)
@@ -139,26 +140,46 @@ const showFullToken = ref(false)
 
 // Получение данных кастомера
 async function fetchCustomerData() {
+  // Проверяем наличие ID
+  if (!customerId.value || customerId.value === 'undefined') {
+    error.value = 'ID кастомера не указан или некорректен'
+    return
+  }
+
   loading.value = true
   error.value = ''
 
   try {
+    // Проверяем наличие API ключа
+    const apiKey = config.public.apiKey
+    if (!apiKey) {
+      throw new Error('API ключ не найден. Проверьте файл .env')
+    }
+
+    console.log('Отправляем запрос для кастомера:', customerId.value)
+    console.log('API ключ:', apiKey ? 'Установлен' : 'Отсутствует')
+
     const response = await fetch('https://botprorok.ru/api/customers/get-by-id', {
       method: 'POST',
       headers: {
-        'x-api-key': config.public.apiKey,
+        'x-api-key': apiKey,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        customerId: customerId
+        customerId: customerId.value
       })
     })
 
+    console.log('Статус ответа:', response.status)
+
     if (!response.ok) {
-      throw new Error(`Ошибка ${response.status}: ${response.statusText}`)
+      const errorText = await response.text()
+      console.error('Ошибка ответа:', errorText)
+      throw new Error(`Ошибка ${response.status}: ${response.statusText}. ${errorText}`)
     }
 
     const data = await response.json()
+    console.log('Полученные данные:', data)
     customer.value = data
   } catch (err) {
     error.value = err.message || 'Не удалось загрузить данные кастомера'
