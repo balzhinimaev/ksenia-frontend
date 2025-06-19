@@ -119,27 +119,102 @@
 
           <!-- Список всех пользователей -->
           <div class="mt-8">
-            <h2 class="text-2xl font-bold mb-4">Все пользователи</h2>
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-2xl font-bold">Все пользователи</h2>
+              
+              <!-- Настройки отображения -->
+              <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                  <label class="text-sm text-gray-700">Показать:</label>
+                  <select 
+                    v-model="pageSize" 
+                    @change="changePageSize"
+                    class="px-3 py-1 border border-gray-300 rounded-md text-sm"
+                  >
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                  <span class="text-sm text-gray-700">на странице</span>
+                </div>
+              </div>
+            </div>
+
             <div class="bg-white shadow overflow-hidden rounded-lg">
               <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                   <thead class="bg-gray-50">
                     <tr>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chat ID</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer ID</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Состояние</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">День рождения</th>
+                      <th 
+                        @click="setSortField('chat_id')"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                      >
+                        <div class="flex items-center space-x-1">
+                          <span>Chat ID</span>
+                          <span v-if="sortField === 'chat_id'" class="text-indigo-600">
+                            {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                          </span>
+                        </div>
+                      </th>
+                      <th 
+                        @click="setSortField('customerId')"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                      >
+                        <div class="flex items-center space-x-1">
+                          <span>Customer ID</span>
+                          <span v-if="sortField === 'customerId'" class="text-indigo-600">
+                            {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                          </span>
+                        </div>
+                      </th>
+                      <th 
+                        @click="setSortField('state')"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                      >
+                        <div class="flex items-center space-x-1">
+                          <span>Состояние</span>
+                          <span v-if="sortField === 'state'" class="text-indigo-600">
+                            {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                          </span>
+                        </div>
+                      </th>
+                      <th 
+                        @click="setSortField('birthday')"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                      >
+                        <div class="flex items-center space-x-1">
+                          <span>День рождения</span>
+                          <span v-if="sortField === 'birthday'" class="text-indigo-600">
+                            {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                          </span>
+                        </div>
+                      </th>
+                      <th 
+                        @click="setSortField('createdAt')"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                      >
+                        <div class="flex items-center space-x-1">
+                          <span>Дата создания</span>
+                          <span v-if="sortField === 'createdAt'" class="text-indigo-600">
+                            {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                          </span>
+                        </div>
+                      </th>
                       <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
                     </tr>
                   </thead>
                   <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-for="user in users" :key="user._id">
+                    <tr v-for="user in sortedUsers" :key="user._id">
                       <td class="px-6 py-4 whitespace-nowrap">{{ user.chat_id }}</td>
                       <td class="px-6 py-4 whitespace-nowrap">
                         <span class="text-xs font-mono">{{ user.customerId || 'Не указан' }}</span>
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap">{{ user.state }}</td>
                       <td class="px-6 py-4 whitespace-nowrap">{{ user.birthday }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ user.createdAt ? formatDate(user.createdAt) : 'Не указано' }}
+                      </td>
                       <td class="px-6 py-4 whitespace-nowrap">
                         <button
                           @click="viewUserDetails(user.chat_id)"
@@ -153,12 +228,13 @@
                 </table>
               </div>
               
-              <!-- Пагинация -->
+              <!-- Информация о пагинации -->
               <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
                 <div class="flex-1 flex justify-between items-center">
                   <div>
                     <p class="text-sm text-gray-700">
-                      Страница {{ currentPage }} из {{ totalPages }}
+                      Показано {{ startIndex + 1 }}-{{ endIndex }} из {{ filteredUsers.length }} пользователей
+                      (Страница {{ currentPage }} из {{ totalDisplayPages }})
                     </p>
                   </div>
                   <div class="flex space-x-2">
@@ -176,10 +252,10 @@
                     </button>
                     <button
                       @click="changePage(currentPage + 1)"
-                      :disabled="currentPage === totalPages"
+                      :disabled="currentPage === totalDisplayPages"
                       :class="[
                         'relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md',
-                        currentPage === totalPages
+                        currentPage === totalDisplayPages
                           ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                           : 'bg-white text-gray-700 hover:bg-gray-50'
                       ]"
@@ -203,15 +279,68 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const searchChatId = ref('')
 const searchedUser = ref(null)
 const users = ref([])
 const currentPage = ref(1)
 const totalPages = ref(1)
 const error = ref('')
+const pageSize = ref(50)
+const sortField = ref('')
+const sortDirection = ref('asc')
 
 // Получение токена из куки
 const token = useCookie('bearer-token')
+
+// Отфильтрованные пользователи (пока без фильтров, просто копия)
+const filteredUsers = computed(() => {
+  return users.value
+})
+
+// Отсортированные пользователи
+const sortedAndFilteredUsers = computed(() => {
+  if (!sortField.value) return filteredUsers.value
+  
+  return [...filteredUsers.value].sort((a, b) => {
+    const aValue = a[sortField.value] || ''
+    const bValue = b[sortField.value] || ''
+    
+    let comparison = 0
+    
+    // Специальная обработка для дат
+    if (sortField.value === 'createdAt' || sortField.value === 'updatedAt') {
+      const aDate = new Date(aValue)
+      const bDate = new Date(bValue)
+      comparison = aDate.getTime() - bDate.getTime()
+    } else {
+      // Обычная строковая сортировка
+      comparison = String(aValue).localeCompare(String(bValue))
+    }
+    
+    return sortDirection.value === 'asc' ? comparison : -comparison
+  })
+})
+
+// Общее количество страниц для отображения
+const totalDisplayPages = computed(() => {
+  return Math.ceil(sortedAndFilteredUsers.value.length / pageSize.value)
+})
+
+// Индексы для текущей страницы
+const startIndex = computed(() => {
+  return (currentPage.value - 1) * pageSize.value
+})
+
+const endIndex = computed(() => {
+  return Math.min(startIndex.value + pageSize.value, sortedAndFilteredUsers.value.length)
+})
+
+// Пользователи для текущей страницы
+const sortedUsers = computed(() => {
+  return sortedAndFilteredUsers.value.slice(startIndex.value, endIndex.value)
+})
 
 // Поиск пользователя по chat_id
 async function searchUser() {
@@ -242,11 +371,11 @@ async function searchUser() {
   }
 }
 
-// Получение всех пользователей с пагинацией
-async function fetchUsers(page = 1) {
+// Получение всех пользователей
+async function fetchUsers() {
   error.value = ''
   try {
-    const response = await fetch(`/api/users/?page=${page}`, {
+    const response = await fetch(`/api/users/all`, {
       headers: {
         'Authorization': `Bearer ${token.value}`
       }
@@ -262,9 +391,9 @@ async function fetchUsers(page = 1) {
     }
     
     const data = await response.json()
-    users.value = data.users
-    totalPages.value = data.totalPages
-    currentPage.value = data.currentPage
+    users.value = data.users || data || []
+    // Сбрасываем на первую страницу при загрузке новых данных
+    currentPage.value = 1
   } catch (err) {
     console.error('Ошибка при получении пользователей:', err)
     error.value = err.message
@@ -273,9 +402,9 @@ async function fetchUsers(page = 1) {
 }
 
 // Изменение страницы
-async function changePage(page) {
-  if (page < 1 || page > totalPages.value) return
-  await fetchUsers(page)
+function changePage(page) {
+  if (page < 1 || page > totalDisplayPages.value) return
+  currentPage.value = page
 }
 
 // Просмотр деталей пользователя
@@ -299,6 +428,24 @@ function formatDate(dateString) {
   } catch {
     return dateString
   }
+}
+
+// Сортировка пользователей
+function setSortField(field) {
+  if (field === sortField.value) {
+    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortField.value = field
+    sortDirection.value = 'asc'
+  }
+  // Сбрасываем на первую страницу при изменении сортировки
+  currentPage.value = 1
+}
+
+// Изменение размера страницы
+function changePageSize() {
+  // Сбрасываем на первую страницу при изменении размера
+  currentPage.value = 1
 }
 
 // Загрузка пользователей при монтировании компонента
