@@ -119,6 +119,45 @@
 
           <!-- Список всех пользователей -->
           <div class="mt-8">
+            <!-- Статистика для админов -->
+            <div v-if="adminStats" class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <div class="flex items-center">
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-blue-900">Всего пользователей</p>
+                    <p class="text-2xl font-bold text-blue-700">{{ adminStats.totalUsers }}</p>
+                  </div>
+                  <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <span class="text-white text-xs">👥</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                <div class="flex items-center">
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-green-900">Всего кастомеров</p>
+                    <p class="text-2xl font-bold text-green-700">{{ adminStats.totalCustomers }}</p>
+                  </div>
+                  <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                    <span class="text-white text-xs">🏢</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                <div class="flex items-center">
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-yellow-900">Без кастомера</p>
+                    <p class="text-2xl font-bold text-yellow-700">{{ adminStats.usersWithoutCustomer?.length || 0 }}</p>
+                  </div>
+                  <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                    <span class="text-white text-xs">⚠️</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="flex items-center justify-between mb-4">
               <h2 class="text-2xl font-bold">Все пользователи</h2>
               
@@ -290,6 +329,7 @@ const error = ref('')
 const pageSize = ref(50)
 const sortField = ref('')
 const sortDirection = ref('asc')
+const adminStats = ref(null)
 
 // Получение токена из куки
 const token = useCookie('bearer-token')
@@ -391,7 +431,29 @@ async function fetchUsers() {
     }
     
     const data = await response.json()
-    users.value = data.users || data || []
+    
+    // Проверяем, какой тип ответа получили
+    if (data.isAdmin) {
+      // Ответ для админа - берем пользователей из allUsers
+      users.value = data.allUsers || []
+      console.log('Загружены пользователи для админа:', users.value.length)
+      
+      // Сохраняем статистику админа
+      adminStats.value = {
+        totalUsers: data.totalUsers,
+        totalCustomers: data.totalCustomers,
+        usersWithoutCustomer: data.usersWithoutCustomer,
+        usersByCustomer: data.usersByCustomer
+      }
+    } else {
+      // Ответ для кастомера - берем пользователей напрямую
+      users.value = data.users || data || []
+      console.log('Загружены пользователи для кастомера:', users.value.length)
+      
+      // Очищаем статистику админа для кастомеров
+      adminStats.value = null
+    }
+    
     // Сбрасываем на первую страницу при загрузке новых данных
     currentPage.value = 1
   } catch (err) {
