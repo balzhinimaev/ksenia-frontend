@@ -30,8 +30,11 @@
             <div class="space-y-4">
               <div class="border-b pb-4">
                 <p><span class="font-medium">Chat ID:</span> {{ searchedUser.chat_id }}</p>
+                <p><span class="font-medium">Customer ID:</span> {{ searchedUser.customerId || 'Не указан' }}</p>
                 <p><span class="font-medium">Состояние:</span> {{ searchedUser.state }}</p>
                 <p><span class="font-medium">День рождения:</span> {{ searchedUser.birthday }}</p>
+                <p v-if="searchedUser.createdAt"><span class="font-medium">Дата создания:</span> {{ formatDate(searchedUser.createdAt) }}</p>
+                <p v-if="searchedUser.updatedAt"><span class="font-medium">Последнее обновление:</span> {{ formatDate(searchedUser.updatedAt) }}</p>
               </div>
 
               <!-- Диалог -->
@@ -71,24 +74,24 @@
                   <p class="mt-2 whitespace-pre-wrap">{{ searchedUser.answer_4 }}</p>
                 </div>
 
-                <div v-if="searchedUser.usermessage_5" class="bg-blue-50 p-4 rounded-lg">
+                <div v-if="searchedUser.usermessage5" class="bg-blue-50 p-4 rounded-lg">
                   <p class="font-medium text-blue-700">Сообщение пользователя 5:</p>
-                  <p class="mt-2 whitespace-pre-wrap">{{ searchedUser.usermessage_5 }}</p>
+                  <p class="mt-2 whitespace-pre-wrap">{{ searchedUser.usermessage5 }}</p>
                 </div>
 
                 <div v-if="searchedUser.answer_5" class="bg-gray-50 p-4 rounded-lg">
                   <p class="font-medium text-gray-700">Ответ 5:</p>
-                  <p class="mt-2 whitespace-pre-wrap">{{ searchedUser.answer_5 }}</p>
+                  <div class="mt-2 whitespace-pre-wrap" v-html="searchedUser.answer_5"></div>
                 </div>
 
-                <div v-if="searchedUser.usermessage_6" class="bg-blue-50 p-4 rounded-lg">
+                <div v-if="searchedUser.usermessage6" class="bg-blue-50 p-4 rounded-lg">
                   <p class="font-medium text-blue-700">Сообщение пользователя 6:</p>
-                  <p class="mt-2 whitespace-pre-wrap">{{ searchedUser.usermessage_6 }}</p>
+                  <p class="mt-2 whitespace-pre-wrap">{{ searchedUser.usermessage6 }}</p>
                 </div>
 
                 <div v-if="searchedUser.answer_6" class="bg-gray-50 p-4 rounded-lg">
                   <p class="font-medium text-gray-700">Ответ 6:</p>
-                  <p class="mt-2 whitespace-pre-wrap">{{ searchedUser.answer_6 }}</p>
+                  <div class="mt-2 whitespace-pre-wrap" v-html="searchedUser.answer_6"></div>
                 </div>
 
                 <!-- История сообщений пользователя -->
@@ -103,10 +106,10 @@
                       <div class="flex items-center justify-between">
                         <span class="text-sm text-gray-500">Сообщение #{{ index + 1 }}</span>
                         <span class="text-xs text-gray-400">
-                          {{ message.timestamp ? new Date(message.timestamp).toLocaleString() : 'Время не указано' }}
+                          {{ message.timestamp ? formatDate(message.timestamp) : 'Время не указано' }}
                         </span>
                       </div>
-                      <p class="mt-2 text-gray-700 whitespace-pre-wrap">{{ message || 'Пустое сообщение' }}</p>
+                      <p class="mt-2 text-gray-700 whitespace-pre-wrap">{{ typeof message === 'string' ? message : message.text || 'Пустое сообщение' }}</p>
                     </div>
                   </div>
                 </div>
@@ -123,6 +126,7 @@
                   <thead class="bg-gray-50">
                     <tr>
                       <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chat ID</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer ID</th>
                       <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Состояние</th>
                       <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">День рождения</th>
                       <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
@@ -131,6 +135,9 @@
                   <tbody class="bg-white divide-y divide-gray-200">
                     <tr v-for="user in users" :key="user._id">
                       <td class="px-6 py-4 whitespace-nowrap">{{ user.chat_id }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="text-xs font-mono">{{ user.customerId || 'Не указан' }}</span>
+                      </td>
                       <td class="px-6 py-4 whitespace-nowrap">{{ user.state }}</td>
                       <td class="px-6 py-4 whitespace-nowrap">{{ user.birthday }}</td>
                       <td class="px-6 py-4 whitespace-nowrap">
@@ -275,6 +282,23 @@ async function changePage(page) {
 function viewUserDetails(chatId) {
   searchChatId.value = chatId
   searchUser()
+}
+
+// Форматирование даты
+function formatDate(dateString) {
+  if (!dateString) return 'Не указано'
+  
+  try {
+    return new Date(dateString).toLocaleString('ru-RU', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  } catch {
+    return dateString
+  }
 }
 
 // Загрузка пользователей при монтировании компонента
