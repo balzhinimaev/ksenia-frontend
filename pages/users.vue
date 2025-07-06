@@ -330,6 +330,7 @@ const pageSize = ref(50)
 const sortField = ref('')
 const sortDirection = ref('asc')
 const adminStats = ref(null)
+const config = useRuntimeConfig()
 
 // Получение токена из куки
 const token = useCookie('bearer-token')
@@ -388,7 +389,7 @@ async function searchUser() {
   error.value = ''
   
   try {
-    const response = await fetch(`/api/users/by-chat-id/${searchChatId.value}`, {
+    const response = await fetch(`${config.public.apiBase}/api/users/by-chat-id/${searchChatId.value}`, {
       headers: {
         'Authorization': `Bearer ${token.value}`
       }
@@ -415,7 +416,7 @@ async function searchUser() {
 async function fetchUsers() {
   error.value = ''
   try {
-    const response = await fetch(`/api/users/all`, {
+    const response = await fetch(`${config.public.apiBase}/api/users/all`, {
       headers: {
         'Authorization': `Bearer ${token.value}`
       }

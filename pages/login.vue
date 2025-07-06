@@ -61,13 +61,14 @@ const formData = ref({
 const loading = ref(false)
 const error = ref('')
 const router = useRouter()
+const config = useRuntimeConfig()
 
 async function handleLogin() {
   try {
     loading.value = true
     error.value = ''
     
-    const response = await fetch('/api/auth/login', {
+    const response = await fetch(`${config.public.apiBase}/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

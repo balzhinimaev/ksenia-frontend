@@ -5,7 +5,8 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss'],
   runtimeConfig: {
     public: {
-      apiKey: process.env.API_KEY
+      apiKey: process.env.API_KEY,
+      apiBase: process.env.API_BASE || ''
     }
   }
 })

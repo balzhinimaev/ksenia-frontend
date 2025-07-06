@@ -59,8 +59,9 @@ definePageMeta({
   middleware: "customer",
 });
 
-const { user } = useAuth();
 const router = useRouter();
+const { user } = useAuth();
+const config = useRuntimeConfig();
 
 const settings = ref(null);
 const loading = ref(false);
@@ -74,7 +75,7 @@ onMounted(async () => {
   }
   loading.value = true;
   try {
-    const response = await fetch(`/api/customers/${user.value.id}/settings`, {
+    const response = await fetch(`${config.public.apiBase}/api/customers/${user.value.id}/settings`, {
       headers: { 'Authorization': `Bearer ${useCookie('bearer-token').value}` }
     });
     if (!response.ok) throw new Error('Не удалось загрузить настройки.');
@@ -96,7 +97,7 @@ async function updateSettings() {
   notification.value = { message: '', type: '' };
   
   try {
-    const response = await fetch(`/api/customers/${user.value.id}/settings`, {
+    const response = await fetch(`${config.public.apiBase}/api/customers/${user.value.id}/settings`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

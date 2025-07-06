@@ -159,7 +159,7 @@ async function fetchCustomerData() {
     console.log('Отправляем запрос для кастомера:', customerId.value)
     console.log('API ключ:', apiKey ? 'Установлен' : 'Отсутствует')
 
-    const response = await fetch('https://botprorok.ru/api/customers/get-by-id', {
+    const response = await fetch(`${config.public.apiBase}/api/customers/get-by-id`, {
       method: 'POST',
       headers: {
         'x-api-key': apiKey,

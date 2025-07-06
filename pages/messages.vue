@@ -110,10 +110,16 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+import { useAuth } from '~/composables/useAuth'
+
 const token = useCookie('bearer-token')
 const sending = ref(false)
 const notification = ref(null)
 const broadcastMessage = ref('')
+const router = useRouter()
+const { isAdmin, isCustomer } = useAuth()
+const config = useRuntimeConfig()
 
 const singleMessage = ref({
   chat_id: '',
@@ -134,7 +140,7 @@ async function sendSingleMessage() {
 
   sending.value = true
   try {
-    const response = await fetch('/api/messages/send', {
+    const response = await fetch(`${config.public.apiBase}/api/messages/send`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token.value}`,
@@ -180,7 +186,7 @@ async function sendMassMessage() {
 
   sending.value = true
   try {
-    const response = await fetch('/api/messages/mass', {
+    const response = await fetch(`${config.public.apiBase}/api/messages/mass`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token.value}`,
@@ -219,7 +225,7 @@ async function sendBroadcastMessage() {
 
   sending.value = true
   try {
-    const response = await fetch('/api/messages/broadcast', {
+    const response = await fetch(`${config.public.apiBase}/api/messages/broadcast`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token.value}`,

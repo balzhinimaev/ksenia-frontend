@@ -34,7 +34,21 @@
 
           <!-- Ссылки для Кастомера -->
           <template v-if="isCustomer">
-             <NuxtLink 
+            <a
+              href="https://taplink.cc/sistema/p/1008398/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            >
+              ТРАФИК
+            </a>
+            <NuxtLink 
+              to="/messenger" 
+              class="text-white hover:text-gray-300"
+            >
+              Мессенджер
+            </NuxtLink>
+            <NuxtLink 
               to="/users" 
               class="text-white hover:text-gray-300"
             >

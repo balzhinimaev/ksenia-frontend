@@ -164,7 +164,7 @@ async function fetchCustomers() {
   customersError.value = ''
 
   try {
-    const response = await fetch('/api/customers', {
+    const response = await fetch(`${config.public.apiBase}/api/customers`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token.value}`,
@@ -226,7 +226,7 @@ async function createCustomer() {
   result.value = null
 
   try {
-    const response = await fetch('/api/customers', {
+    const response = await fetch(`${config.public.apiBase}/api/customers`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
