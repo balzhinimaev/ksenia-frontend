@@ -32,7 +32,7 @@
                 </div>
               </div>
               <!-- Расширенный блок -->
-              <div v-if="expandedUserId === user._id" class="mt-4 pt-4 border-t border-gray-200">
+              <div v-if="expandedUserId === user._id" class="mt-4 pt-4 border-t border-gray-200" @click.stop>
                 <h4 class="text-sm font-semibold text-gray-700 mb-2">История диалога:</h4>
                 <div class="space-y-3">
                   <div v-for="pair in qaPairs(user)" :key="pair.id">
@@ -56,6 +56,30 @@
                   </ul>
                 </div>
                 <p v-else class="text-xs text-gray-500">Лог сообщений пуст.</p>
+
+                <!-- Форма отправки сообщения -->
+                <div class="mt-4">
+                  <h4 class="text-sm font-semibold text-gray-700 mb-2">Отправить сообщение:</h4>
+                  <div class="flex items-center space-x-2">
+                    <input
+                      v-model="messageToSend"
+                      type="text"
+                      placeholder="Введите ваше сообщение..."
+                      class="flex-grow block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      @keydown.enter="sendMessage(user.chat_id)"
+                    />
+                    <button
+                      @click="sendMessage(user.chat_id)"
+                      :disabled="sendingMessage || !messageToSend"
+                      class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <span v-if="sendingMessage">Отправка...</span>
+                      <span v-else>Отправить</span>
+                    </button>
+                  </div>
+                  <p v-if="sendSuccess" class="text-sm text-green-600 mt-2">{{ sendSuccess }}</p>
+                  <p v-if="sendError" class="text-sm text-red-600 mt-2">{{ sendError }}</p>
+                </div>
               </div>
             </li>
           </ul>
@@ -98,6 +122,10 @@ const token = useCookie('bearer-token');
 const expandedUserId = ref(null);
 const currentPage = ref(1);
 const totalPages = ref(1);
+const messageToSend = ref('');
+const sendingMessage = ref(false);
+const sendError = ref('');
+const sendSuccess = ref('');
 
 const qaPairs = (user) => {
   const pairs = [];
@@ -128,10 +156,52 @@ const qaPairs = (user) => {
 };
 
 function toggleUser(userId) {
+  messageToSend.value = '';
+  sendError.value = '';
+  sendSuccess.value = '';
   if (expandedUserId.value === userId) {
     expandedUserId.value = null;
   } else {
     expandedUserId.value = userId;
+  }
+}
+
+async function sendMessage(chatId) {
+  if (!messageToSend.value) return;
+
+  sendingMessage.value = true;
+  sendError.value = '';
+  sendSuccess.value = '';
+
+  try {
+    const response = await fetch(`${config.public.apiBase}/api/messages/send`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token.value}`
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        message: messageToSend.value
+      })
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message || `Ошибка ${response.status}`);
+    }
+
+    sendSuccess.value = 'Сообщение успешно отправлено!';
+    messageToSend.value = '';
+
+  } catch (err) {
+    sendError.value = err.message || 'Не удалось отправить сообщение.';
+  } finally {
+    sendingMessage.value = false;
+    setTimeout(() => {
+        sendSuccess.value = '';
+        sendError.value = '';
+    }, 4000);
   }
 }
 
