@@ -25,7 +25,7 @@
             <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
               <div class="flex items-center">
                 <div class="flex-1">
-                  <p class="text-blue-100 text-sm font-medium">Всего пользователей</p>
+                  <p class="text-blue-100 text-sm font-medium">ваша БАЗА пользователей</p>
                   <p class="text-3xl font-bold">{{ stats.totalUsers }}</p>
                 </div>
                 <div class="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center">
