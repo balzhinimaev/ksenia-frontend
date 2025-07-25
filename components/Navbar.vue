@@ -49,6 +49,12 @@
               Мессенджер
             </NuxtLink>
             <NuxtLink 
+              to="/constructor" 
+              class="text-white hover:text-gray-300"
+            >
+              Конструктор продуктов
+            </NuxtLink>
+            <NuxtLink 
               to="/users" 
               class="text-white hover:text-gray-300"
             >
