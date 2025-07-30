@@ -108,6 +108,13 @@
             </p>
           </div>
         </div>
+
+        <!-- Контент продукта -->
+        <ProductContentBlock 
+          product-type="forecast" 
+          product-id="taroscope-main" 
+          product-display-name="Тароскоп" 
+        />
       </div>
     </div>
   </div>
@@ -115,7 +122,7 @@
 
 <script setup>
 definePageMeta({
-  middleware: "customer",
+  middleware: "customer-or-admin",
 });
 
 const config = useRuntimeConfig();
