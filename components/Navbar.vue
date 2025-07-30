@@ -13,6 +13,12 @@
           <!-- Ссылки для Админа -->
           <template v-if="isAdmin">
             <NuxtLink 
+              to="/constructor" 
+              class="text-white hover:text-gray-300"
+            >
+              Конструктор продуктов
+            </NuxtLink>
+            <NuxtLink 
               to="/users" 
               class="text-white hover:text-gray-300"
             >

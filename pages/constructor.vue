@@ -196,6 +196,9 @@
             </p>
           </div>
         </div>
+
+        <!-- Блок управления контентом -->
+        <ContentBlock />
       </div>
     </div>
   </div>
@@ -203,6 +206,6 @@
 
 <script setup>
 definePageMeta({
-  middleware: "customer",
+  middleware: "customer-or-admin",
 });
 </script> 
