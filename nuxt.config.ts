@@ -1,12 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-05-15',
+  compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss'],
+  modules: ["@nuxtjs/tailwindcss"],
   runtimeConfig: {
     public: {
       apiKey: process.env.API_KEY,
-      apiBase: 'http://localhost:7000' // Временно захардкодим для исправления проблемы
-    }
-  }
-})
+      apiBase: process.env.API_BASE || "http://localhost:7000",
+    },
+  },
+});
