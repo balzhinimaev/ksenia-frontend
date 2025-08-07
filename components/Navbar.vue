@@ -36,6 +36,13 @@
             >
               Кастомеры
             </NuxtLink>
+            <NuxtLink 
+              to="/payments" 
+              class="text-white hover:text-gray-300"
+            >
+              Оплаты
+            </NuxtLink>
+            
           </template>
 
           <!-- Ссылки для Кастомера -->
@@ -77,6 +84,12 @@
               class="text-white hover:text-gray-300"
             >
               Настройки бота
+            </NuxtLink>
+            <NuxtLink 
+              to="/payments" 
+              class="text-white hover:text-gray-300"
+            >
+              Оплаты
             </NuxtLink>
           </template>
 
